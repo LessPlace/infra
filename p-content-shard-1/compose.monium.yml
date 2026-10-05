@@ -1,0 +1,8 @@
+services:
+  content:
+    env_file:
+      - path: /etc/less/secrets/monium.env
+        format: raw
+    environment:
+      OTEL_SDK_DISABLED: 'false'
+      OTEL_SERVICE_NAME: sheets-api

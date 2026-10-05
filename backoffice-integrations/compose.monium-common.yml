@@ -1,0 +1,15 @@
+services:
+  reader:
+    env_file:
+      - path: /etc/less/secrets/monium.env
+        format: raw
+    environment:
+      OTEL_SDK_DISABLED: 'false'
+      OTEL_SERVICE_NAME: control-plane-backoffice-reader
+  accounts:
+    env_file:
+      - path: /etc/less/secrets/monium.env
+        format: raw
+    environment:
+      OTEL_SDK_DISABLED: 'false'
+      OTEL_SERVICE_NAME: accounts-backoffice-reader
