@@ -1,0 +1,91 @@
+name: less-content-shard-1
+x-logging: &logging
+  driver: json-file
+  options: {max-size: 10m, max-file: '3'}
+services:
+  postgres:
+    image: postgres:18
+    restart: unless-stopped
+    cpus: 0.60
+    mem_limit: 1024m
+    memswap_limit: 1024m
+    pids_limit: 128
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres-admin-password
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+    command: [postgres, -c, shared_buffers=256MB, -c, max_connections=60, -c, work_mem=4MB]
+    volumes:
+      - /srv/less/postgres:/var/lib/postgresql
+      - /etc/less/secrets/postgres-admin-password:/run/secrets/postgres-admin-password:ro
+    networks: [database]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U postgres -d postgres']
+      interval: 15s
+      timeout: 3s
+      retries: 4
+    logging: *logging
+  valkey:
+    image: valkey/valkey:9.1.1-alpine
+    restart: unless-stopped
+    cpus: 0.20
+    mem_limit: 384m
+    memswap_limit: 384m
+    pids_limit: 64
+    command: [valkey-server, /etc/valkey/valkey.conf]
+    volumes:
+      - /srv/less/valkey:/data
+      - ./valkey.conf:/etc/valkey/valkey.conf:ro
+      - /etc/less/secrets/valkey.acl:/etc/valkey/users.acl:ro
+    networks: [database]
+    logging: *logging
+  content:
+    image: cr.yandex/crp5f6o2ivb58ruhp27e/content:latest
+    restart: unless-stopped
+    init: true
+    cpus: 1.00
+    mem_limit: 1792m
+    memswap_limit: 1792m
+    pids_limit: 192
+    env_file:
+      - path: /etc/less/secrets/monium.env
+        format: raw
+    environment:
+      OTEL_SDK_DISABLED: 'false'
+      OTEL_SERVICE_NAME: sheets-api
+      APP_MODE: production
+      APP_STAND: production
+      APP_SHARD: '1'
+      APP_HTTP_HOST: 0.0.0.0
+      APP_HTTP_PORT: '1711'
+      APP_ALLOW_PRIVATE_PLAINTEXT_DEPENDENCIES: 'true'
+      AUTH_BACKEND: remote
+      AUTH_COOKIE_NAME: __Host-less_sid
+      AUTH_REMOTE_BASE_URL: http://10.130.0.13:1713
+      DB_HOST: postgres
+      DB_PORT: '5432'
+      DB_USERNAME: less_content
+      DB_DATABASE: less_content
+      VALKEY_MODE: standalone
+      VALKEY_ENDPOINTS: valkey:6379
+      VALKEY_USERNAME: content
+      VALKEY_TLS_ENABLED: 'false'
+      CONTROL_PLANE_BASE_URL: http://10.130.0.13:7010
+      S3_ENDPOINT: https://storage.yandexcloud.net
+      S3_REGION: ru-central1
+      S3_BUCKET: less
+      S3_DEDICATED_BUCKET: 'true'
+      LOG_FILE_PATH: /var/log/less/sheets-api.log
+      LOG_LEVEL: info
+    volumes:
+      - /etc/less/secrets/sheets-api.json:/run/secrets/sheets-api.json:ro
+      - /srv/less/logs/content:/var/log/less
+    ports: ['10.130.0.4:1711:1711']
+    networks: [database, outbound]
+    depends_on:
+      postgres: {condition: service_healthy}
+      valkey: {condition: service_started}
+    logging: *logging
+networks:
+  database:
+    internal: true
+  outbound: {}

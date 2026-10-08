@@ -1,0 +1,15 @@
+# Использовать вместе с compose.edge.yml только после доставки PKI и секрета прокси.
+services:
+  edge:
+    volumes:
+      - ./nginx-backoffice:/etc/nginx/backoffice.d:ro
+      - /etc/less/backoffice-pki:/etc/less/backoffice-pki:ro
+      - /etc/less/secrets/backoffice-proxy.conf:/etc/less/backoffice-proxy.conf:ro
+    networks:
+      web: {}
+      backoffice:
+        ipv4_address: 172.30.10.2
+networks:
+  backoffice:
+    external: true
+    name: less-backoffice

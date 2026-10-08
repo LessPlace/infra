@@ -1,0 +1,47 @@
+# Секреты доставляет deliver-secrets.py до первого запуска.
+name: less-common
+services:
+  postgres:
+    image: postgres:18
+    restart: unless-stopped
+    cpus: 0.60
+    mem_limit: 1024m
+    memswap_limit: 1024m
+    pids_limit: 128
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres-admin-password
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+    command: [postgres, -c, shared_buffers=256MB, -c, max_connections=60, -c, work_mem=4MB]
+    volumes:
+      # PostgreSQL 18: каталог версии создаётся внутри /var/lib/postgresql.
+      - /srv/less/postgres:/var/lib/postgresql
+      - /etc/less/secrets/postgres-admin-password:/run/secrets/postgres-admin-password:ro
+    networks: [database]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U postgres -d postgres']
+      interval: 15s
+      timeout: 3s
+      retries: 4
+    logging:
+      driver: json-file
+      options: {max-size: 10m, max-file: '3'}
+  valkey:
+    image: valkey/valkey:9.1.1-alpine
+    restart: unless-stopped
+    cpus: 0.20
+    mem_limit: 256m
+    memswap_limit: 256m
+    pids_limit: 64
+    command: [valkey-server, /etc/valkey/valkey.conf]
+    volumes:
+      - /srv/less/valkey:/data
+      - ./valkey.conf:/etc/valkey/valkey.conf:ro
+      - /etc/less/secrets/valkey.acl:/etc/valkey/users.acl:ro
+    networks: [database]
+    logging:
+      driver: json-file
+      options: {max-size: 10m, max-file: '3'}
+networks:
+  database:
+    name: less-database
+    internal: true

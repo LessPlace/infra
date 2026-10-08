@@ -1,0 +1,26 @@
+[
+  {
+    "id": "fbeej3dr2667t0bs06to",
+    "name": "less-http-details",
+    "title": "Less · 02 · Запросы и задержки",
+    "etag": "1",
+    "widgets": 9,
+    "url": "https://monium.yandex.cloud/projects/folder__b1gk1vp06cum61i9d4fe/dashboards/less-http-details/view"
+  },
+  {
+    "id": "fbeujekmqjl7kjrcc1mo",
+    "name": "less-infrastructure",
+    "title": "Less · 03 · Машины и ресурсы",
+    "etag": "0",
+    "widgets": 9,
+    "url": "https://monium.yandex.cloud/projects/folder__b1gk1vp06cum61i9d4fe/dashboards/less-infrastructure/view"
+  },
+  {
+    "id": "fbe5huph487btd4075eq",
+    "name": "less-production-health",
+    "title": "Less · 01 · Здоровье продукта",
+    "etag": "4",
+    "widgets": 11,
+    "url": "https://monium.yandex.cloud/projects/folder__b1gk1vp06cum61i9d4fe/dashboards/less-production-health/view"
+  }
+]

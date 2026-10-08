@@ -1,0 +1,7 @@
+[Unit]
+Description=Check Less application log sizes hourly
+[Timer]
+OnCalendar=hourly
+Persistent=true
+[Install]
+WantedBy=timers.target

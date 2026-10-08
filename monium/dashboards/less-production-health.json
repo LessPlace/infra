@@ -1,0 +1,605 @@
+{
+  "folderId": "b1gk1vp06cum61i9d4fe",
+  "name": "less-production-health",
+  "title": "Less · 01 · Здоровье продукта",
+  "description": "Промышленный Less. HTTP-метрики семи служб; обновление раз в минуту.",
+  "labels": {
+    "product": "less",
+    "environment": "production"
+  },
+  "widgets": [
+    {
+      "position": {
+        "x": 0,
+        "y": 0,
+        "w": 36,
+        "h": 4
+      },
+      "text": {
+        "text": "**Production · 7 служб · обновление 1 мин.** [Подробности HTTP](https://monium.yandex.cloud/projects/folder__b1gk1vp06cum61i9d4fe/dashboards/less-http-details/view) · [Машины](https://monium.yandex.cloud/projects/folder__b1gk1vp06cum61i9d4fe/dashboards/less-infrastructure/view)\n\nRPS — принятые службами запросы в секунду, включая внутренние вызовы; это не число действий пользователя. `/health` и `/ready` исключены из нагрузки и задержек. Разрыв — нет данных; пустой график 4xx/5xx может означать, что такая серия ещё не возникала: сверяйте с проверками доступности ниже. Цветовые пороги задержек — ориентиры, не SLA."
+      }
+    },
+    {
+      "position": {
+        "x": 0,
+        "y": 4,
+        "w": 18,
+        "h": 9
+      },
+      "multiSourceChart": {
+        "id": "f7281b24-8b24-5470-8189-a8a2b53b1231",
+        "title": "Нагрузка · RPS по службам",
+        "description": "Производная каждого накопительного счётчика вычисляется до суммирования. При сбросе — разрыв, не отрицательный RPS.",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "95ea31d6-3a6b-5b2a-bcdc-f5df5123d7db",
+              "query": "alias(series_sum(\"service\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"*\", name=\"http.server.requests\", \"http.route\"!=\"/health|/ready\"})), \"{{service}}\")",
+              "textMode": true,
+              "name": "A"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "95ea31d6-3a6b-5b2a-bcdc-f5df5123d7db",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_LINE",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_REQUESTS_PER_SECOND"
+            }
+          }
+        }
+      }
+    },
+    {
+      "position": {
+        "x": 18,
+        "y": 4,
+        "w": 18,
+        "h": 9
+      },
+      "multiSourceChart": {
+        "id": "d2ca68ca-609d-57eb-b974-0fa858aa680c",
+        "title": "Время ответа · p50 / p95 / p99",
+        "description": "Оценка процентилей по приросту гистограммы между отправками. Внутренние вызовы включены; при малом числе запросов значения менее устойчивы.",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "c3230066-1d09-572c-bff2-b886e65b33fc",
+              "query": "alias(1000 * histogram_percentile(50, \"bin\", series_sum(\"bin\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"*\", name=\"http.server.request.duration\", \"http.route\"!=\"/health|/ready\"}))), \"p50\")",
+              "textMode": true,
+              "name": "A"
+            }
+          },
+          {
+            "monitoringTarget": {
+              "dataSourceId": "c3230066-1d09-572c-bff2-b886e65b33fc",
+              "query": "alias(1000 * histogram_percentile(95, \"bin\", series_sum(\"bin\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"*\", name=\"http.server.request.duration\", \"http.route\"!=\"/health|/ready\"}))), \"p95\")",
+              "textMode": true,
+              "name": "B"
+            }
+          },
+          {
+            "monitoringTarget": {
+              "dataSourceId": "c3230066-1d09-572c-bff2-b886e65b33fc",
+              "query": "alias(1000 * histogram_percentile(99, \"bin\", series_sum(\"bin\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"*\", name=\"http.server.request.duration\", \"http.route\"!=\"/health|/ready\"}))), \"p99\")",
+              "textMode": true,
+              "name": "C"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "c3230066-1d09-572c-bff2-b886e65b33fc",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_LINE",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_MILLISECONDS"
+            }
+          }
+        }
+      }
+    },
+    {
+      "position": {
+        "x": 0,
+        "y": 13,
+        "w": 12,
+        "h": 9
+      },
+      "multiSourceChart": {
+        "id": "da7d5e43-46e6-582a-a2bc-8ca6432ba155",
+        "title": "2xx · успешные ответы / с",
+        "description": "",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "61910155-9ab9-545f-9660-037ad4ad61bd",
+              "query": "alias(series_sum(\"service\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"*\", name=\"http.server.requests\", \"http.route\"!=\"/health|/ready\", \"http.response.status_code\"=\"2*\"})), \"{{service}}\")",
+              "textMode": true,
+              "name": "A"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "61910155-9ab9-545f-9660-037ad4ad61bd",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_LINE",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_REQUESTS_PER_SECOND"
+            }
+          }
+        },
+        "seriesOverrides": [
+          {
+            "targetIndex": "0",
+            "settings": {
+              "color": "#35b37e"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "position": {
+        "x": 12,
+        "y": 13,
+        "w": 12,
+        "h": 9
+      },
+      "multiSourceChart": {
+        "id": "a7a0e139-b538-553b-910b-e20afd1d8f21",
+        "title": "4xx · ошибки клиента / с",
+        "description": "В том числе ожидаемые 401/403. Пусто: серия ещё не возникала или нет телеметрии — смотрите проверки доступности.",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "3b71f9a1-acee-5345-9917-a32c163f27ec",
+              "query": "alias(series_sum(\"service\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"*\", name=\"http.server.requests\", \"http.route\"!=\"/health|/ready\", \"http.response.status_code\"=\"4*\"})), \"{{service}}\")",
+              "textMode": true,
+              "name": "A"
+            }
+          },
+          {
+            "monitoringTarget": {
+              "dataSourceId": "3b71f9a1-acee-5345-9917-a32c163f27ec",
+              "query": "alias(0 * series_sum(non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"*\", name=\"http.server.requests\", \"http.route\"!=\"/health|/ready\"})), \"Нулевая линия · телеметрия поступает\")",
+              "textMode": true,
+              "name": "B"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "3b71f9a1-acee-5345-9917-a32c163f27ec",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_LINE",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_REQUESTS_PER_SECOND"
+            }
+          }
+        },
+        "seriesOverrides": [
+          {
+            "targetIndex": "0",
+            "settings": {
+              "color": "#f5b942"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "position": {
+        "x": 24,
+        "y": 13,
+        "w": 12,
+        "h": 9
+      },
+      "multiSourceChart": {
+        "id": "8e6b0c60-fce9-512a-9803-a956a44b9cde",
+        "title": "5xx · ошибки сервера / с",
+        "description": "Прикладные ошибки Less используют HTTP 500. Пусто: серия ещё не возникала или нет телеметрии.",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "7f289aa4-1e10-552f-bbfb-d7c90eca4ac4",
+              "query": "alias(series_sum(\"service\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"*\", name=\"http.server.requests\", \"http.route\"!=\"/health|/ready\", \"http.response.status_code\"=\"5*\"})), \"{{service}}\")",
+              "textMode": true,
+              "name": "A"
+            }
+          },
+          {
+            "monitoringTarget": {
+              "dataSourceId": "7f289aa4-1e10-552f-bbfb-d7c90eca4ac4",
+              "query": "alias(0 * series_sum(non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"*\", name=\"http.server.requests\", \"http.route\"!=\"/health|/ready\"})), \"Нулевая линия · телеметрия поступает\")",
+              "textMode": true,
+              "name": "B"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "7f289aa4-1e10-552f-bbfb-d7c90eca4ac4",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_LINE",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_REQUESTS_PER_SECOND"
+            }
+          }
+        },
+        "seriesOverrides": [
+          {
+            "targetIndex": "0",
+            "settings": {
+              "color": "#ef5350"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "position": {
+        "x": 0,
+        "y": 22,
+        "w": 36,
+        "h": 8
+      },
+      "multiSourceChart": {
+        "id": "d7a382d5-301e-5dd7-9d52-1bfb00915c02",
+        "title": "Карта задержек · пик p95 по интервалам",
+        "description": "Плитка на службу. Максимум p95 по интервалам выбранного периода; это не p95 всего периода. При увеличении периода интервалы укрупняются. Без запросов оценка может быть 0. 250 мс — жёлтый, 1 с — красный, 3 с — фиолетовый.",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "0ea8a0c8-e744-5446-a9d8-08228158067d",
+              "query": "alias(1000 * histogram_percentile(95, \"bin\", series_sum(\"bin\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"sheets-api\", name=\"http.server.request.duration\", \"http.route\"!=\"/health|/ready\"}))), \"sheets-api\")",
+              "textMode": true,
+              "name": "A"
+            }
+          },
+          {
+            "monitoringTarget": {
+              "dataSourceId": "0ea8a0c8-e744-5446-a9d8-08228158067d",
+              "query": "alias(1000 * histogram_percentile(95, \"bin\", series_sum(\"bin\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"less-accounts-api\", name=\"http.server.request.duration\", \"http.route\"!=\"/health|/ready\"}))), \"less-accounts-api\")",
+              "textMode": true,
+              "name": "B"
+            }
+          },
+          {
+            "monitoringTarget": {
+              "dataSourceId": "0ea8a0c8-e744-5446-a9d8-08228158067d",
+              "query": "alias(1000 * histogram_percentile(95, \"bin\", series_sum(\"bin\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"control-plane-api\", name=\"http.server.request.duration\", \"http.route\"!=\"/health|/ready\"}))), \"control-plane-api\")",
+              "textMode": true,
+              "name": "C"
+            }
+          },
+          {
+            "monitoringTarget": {
+              "dataSourceId": "0ea8a0c8-e744-5446-a9d8-08228158067d",
+              "query": "alias(1000 * histogram_percentile(95, \"bin\", series_sum(\"bin\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"backoffice-api\", name=\"http.server.request.duration\", \"http.route\"!=\"/health|/ready\"}))), \"backoffice-api\")",
+              "textMode": true,
+              "name": "D"
+            }
+          },
+          {
+            "monitoringTarget": {
+              "dataSourceId": "0ea8a0c8-e744-5446-a9d8-08228158067d",
+              "query": "alias(1000 * histogram_percentile(95, \"bin\", series_sum(\"bin\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"accounts-backoffice-reader\", name=\"http.server.request.duration\", \"http.route\"!=\"/health|/ready\"}))), \"accounts-backoffice-reader\")",
+              "textMode": true,
+              "name": "E"
+            }
+          },
+          {
+            "monitoringTarget": {
+              "dataSourceId": "0ea8a0c8-e744-5446-a9d8-08228158067d",
+              "query": "alias(1000 * histogram_percentile(95, \"bin\", series_sum(\"bin\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"content-backoffice-reader\", name=\"http.server.request.duration\", \"http.route\"!=\"/health|/ready\"}))), \"content-backoffice-reader\")",
+              "textMode": true,
+              "name": "F"
+            }
+          },
+          {
+            "monitoringTarget": {
+              "dataSourceId": "0ea8a0c8-e744-5446-a9d8-08228158067d",
+              "query": "alias(1000 * histogram_percentile(95, \"bin\", series_sum(\"bin\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"control-plane-backoffice-reader\", name=\"http.server.request.duration\", \"http.route\"!=\"/health|/ready\"}))), \"control-plane-backoffice-reader\")",
+              "textMode": true,
+              "name": "G"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "0ea8a0c8-e744-5446-a9d8-08228158067d",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": 9,
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "gradient": {
+              "greenValue": "0",
+              "yellowValue": "250",
+              "redValue": "1000",
+              "violetValue": "3000"
+            }
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_MILLISECONDS"
+            }
+          },
+          "aggregation": "SERIES_AGGREGATION_MAX",
+          "heatmapSettings": {
+            "greenValue": "0",
+            "yellowValue": "250",
+            "redValue": "1000",
+            "violetValue": "3000"
+          },
+          "tilesSettings": {
+            "showTitle": true,
+            "showValue": true,
+            "showSparkline": true,
+            "sortField": "VALUE",
+            "sortOrder": "DESC"
+          }
+        }
+      }
+    },
+    {
+      "position": {
+        "x": 0,
+        "y": 30,
+        "w": 18,
+        "h": 9
+      },
+      "multiSourceChart": {
+        "id": "f8e56913-0ea6-5b75-90ee-0b2ee45c048f",
+        "title": "Ответы · все коды HTTP",
+        "description": "",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "d69c6312-089f-5a21-bd1d-1b368c201bc0",
+              "query": "alias(series_sum(\"http.response.status_code\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"*\", name=\"http.server.requests\", \"http.route\"!=\"/health|/ready\"})), \"HTTP {{http.response.status_code}}\")",
+              "textMode": true,
+              "name": "A"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "d69c6312-089f-5a21-bd1d-1b368c201bc0",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_STACK",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_REQUESTS_PER_SECOND"
+            }
+          }
+        }
+      }
+    },
+    {
+      "position": {
+        "x": 18,
+        "y": 30,
+        "w": 18,
+        "h": 9
+      },
+      "multiSourceChart": {
+        "id": "1f7a37b1-db7d-5b91-ab11-3edba2e26981",
+        "title": "Среднее время ответа по службам",
+        "description": "Сумма длительностей новых запросов / число новых запросов. При отсутствии запросов значения нет.",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "a0dfae05-234f-5136-8836-4cf703b9f44f",
+              "query": "alias(1000 * series_sum(\"service\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"*\", name=\"http.server.request.duration.sum\", \"http.route\"!=\"/health|/ready\"})) / series_sum(\"service\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"*\", name=\"http.server.request.duration.count\", \"http.route\"!=\"/health|/ready\"})), \"{{service}}\")",
+              "textMode": true,
+              "name": "A"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "a0dfae05-234f-5136-8836-4cf703b9f44f",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_LINE",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_MILLISECONDS"
+            }
+          }
+        }
+      }
+    },
+    {
+      "position": {
+        "x": 0,
+        "y": 39,
+        "w": 36,
+        "h": 8
+      },
+      "multiSourceChart": {
+        "id": "9af93f77-df9e-50e8-a4e6-e2ad91964479",
+        "title": "Проверки доступности · запросов в минуту",
+        "description": "Ожидаются семь линий. Пропавшая линия требует проверки службы или доставки телеметрии. Это успешность внутренних проб, не внешняя доступность less.place.",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "21a02f31-fc21-5b8d-b38e-32cc890cfb1b",
+              "query": "alias(60 * series_sum(\"service\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"*\", name=\"http.server.requests\", \"http.route\"=\"/health|/ready\", \"http.response.status_code\"=\"2*\"})), \"{{service}}\")",
+              "textMode": true,
+              "name": "A"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "21a02f31-fc21-5b8d-b38e-32cc890cfb1b",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_LINE",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_NONE"
+            }
+          }
+        }
+      }
+    },
+    {
+      "position": {
+        "x": 0,
+        "y": 47,
+        "w": 36,
+        "h": 3
+      },
+      "text": {
+        "text": "**Границы наблюдения.** Сейчас измерены входящие HTTP-запросы после прокси. Браузер, nginx, SQL, очереди, S3, SMTP и OAuth не имеют отдельных измерений. Панель не заменяет внешнюю проверку сайта и оповещения."
+      }
+    }
+  ],
+  "timeline": {
+    "period": "1h",
+    "refreshInterval": 60000
+  },
+  "parametrization": {
+    "parameters": []
+  }
+}

@@ -1,0 +1,9 @@
+/var/log/less/backoffice-reader/*.log {
+    size 10M
+    rotate 3
+    missingok
+    notifempty
+    compress
+    copytruncate
+    su root root
+}

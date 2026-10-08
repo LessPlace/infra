@@ -1,0 +1,9 @@
+/var/log/less/control-plane/*.log /var/log/less/accounts/*.log {
+    size 10M
+    rotate 3
+    missingok
+    notifempty
+    compress
+    copytruncate
+    su root root
+}

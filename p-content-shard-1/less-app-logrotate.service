@@ -1,0 +1,7 @@
+[Unit]
+Description=Rotate Less application logs
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/logrotate --state /var/lib/logrotate/less-app.status /opt/less/p-content-shard-1/less-app-logs
+MemoryMax=64M
+CPUQuota=5%

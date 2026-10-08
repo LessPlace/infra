@@ -1,0 +1,14 @@
+# Применять вместе с compose.services.yml после регистрации первого шарда и проверки SG.
+services:
+  control-plane:
+    ports: ['10.130.0.13:7010:7010']
+    # Docker не публикует порты контейнера, подключённого только к internal-сети.
+    networks: [database, service-access]
+  accounts:
+    ports: ['10.130.0.13:1713:1713']
+    environment:
+      CONTENT_BASE_URL: http://10.130.0.4:1711
+
+networks:
+  service-access:
+    name: less-services-access

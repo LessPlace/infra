@@ -1,0 +1,422 @@
+{
+  "folderId": "b1gk1vp06cum61i9d4fe",
+  "name": "less-infrastructure",
+  "title": "Less · 03 · Машины и ресурсы",
+  "description": "Промышленный Less. HTTP-метрики семи служб; обновление раз в минуту.",
+  "labels": {
+    "product": "less",
+    "environment": "production"
+  },
+  "widgets": [
+    {
+      "position": {
+        "x": 0,
+        "y": 0,
+        "w": 36,
+        "h": 3
+      },
+      "text": {
+        "text": "**Машины Less.** [Общий обзор](https://monium.yandex.cloud/projects/folder__b1gk1vp06cum61i9d4fe/dashboards/less-production-health/view) · p-common-1 и p-content-shard-1. Метрики платформы уже выражены в процентах или в секунду; повторная производная не применяется. Использование RAM и свободное место в файловых системах требуют отдельного агента внутри ОС."
+      }
+    },
+    {
+      "position": {
+        "x": 0,
+        "y": 3,
+        "w": 18,
+        "h": 9
+      },
+      "multiSourceChart": {
+        "id": "d4a51a83-2f84-5809-9565-248e6dbbcc04",
+        "title": "Процессор · загрузка ВМ",
+        "description": "",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "89f8d3b0-c2e1-514c-bbf3-cbfa19b4d1d5",
+              "query": "alias(series_sum(\"resource_id\", {project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"default\", service=\"__compute__\", name=\"cpu_usage\"}), \"{{resource_id}}\")",
+              "textMode": true,
+              "name": "A"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "89f8d3b0-c2e1-514c-bbf3-cbfa19b4d1d5",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_LINE",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_PERCENT"
+            }
+          }
+        }
+      }
+    },
+    {
+      "position": {
+        "x": 18,
+        "y": 3,
+        "w": 18,
+        "h": 9
+      },
+      "multiSourceChart": {
+        "id": "734269be-af17-5d5e-9924-db1cec80b98f",
+        "title": "Процессор · отдельные ядра",
+        "description": "",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "71ef7f3d-06a2-501d-b474-0aa37e7d1413",
+              "query": "alias({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"default\", service=\"__compute__\", name=\"cpu_utilization\"}, \"{{resource_id}} · {{cpu_name}}\")",
+              "textMode": true,
+              "name": "A"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "71ef7f3d-06a2-501d-b474-0aa37e7d1413",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_LINE",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_PERCENT"
+            }
+          }
+        }
+      }
+    },
+    {
+      "position": {
+        "x": 0,
+        "y": 12,
+        "w": 18,
+        "h": 9
+      },
+      "multiSourceChart": {
+        "id": "3627b6b7-2b16-5c0e-a605-eaf229f89adc",
+        "title": "Сеть · входящий поток",
+        "description": "",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "b35fdf14-5667-58aa-9c76-e26e278f3049",
+              "query": "alias(series_sum(\"resource_id\", {project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"default\", service=\"__compute__\", name=\"network_received_bytes\"}), \"{{resource_id}}\")",
+              "textMode": true,
+              "name": "A"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "b35fdf14-5667-58aa-9c76-e26e278f3049",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_LINE",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_BYTES_SI_PER_SECOND"
+            }
+          }
+        }
+      }
+    },
+    {
+      "position": {
+        "x": 18,
+        "y": 12,
+        "w": 18,
+        "h": 9
+      },
+      "multiSourceChart": {
+        "id": "f2538598-0d76-5fb0-a371-f97c96fed918",
+        "title": "Сеть · исходящий поток",
+        "description": "",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "ac2a40e0-2cc1-5e2e-8b28-61987878f031",
+              "query": "alias(series_sum(\"resource_id\", {project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"default\", service=\"__compute__\", name=\"network_sent_bytes\"}), \"{{resource_id}}\")",
+              "textMode": true,
+              "name": "A"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "ac2a40e0-2cc1-5e2e-8b28-61987878f031",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_LINE",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_BYTES_SI_PER_SECOND"
+            }
+          }
+        }
+      }
+    },
+    {
+      "position": {
+        "x": 0,
+        "y": 21,
+        "w": 18,
+        "h": 9
+      },
+      "multiSourceChart": {
+        "id": "ea86c27c-5f1d-56b5-acbe-cf9edd906230",
+        "title": "Диск · чтение",
+        "description": "",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "f0fa79f8-4bfd-55cb-987d-7263a881bb53",
+              "query": "alias(series_sum(\"instance\", {project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"default\", service=\"__compute__\", name=\"disk.read_bytes\"}), \"{{instance}}\")",
+              "textMode": true,
+              "name": "A"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "f0fa79f8-4bfd-55cb-987d-7263a881bb53",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_LINE",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_BYTES_SI_PER_SECOND"
+            }
+          }
+        }
+      }
+    },
+    {
+      "position": {
+        "x": 18,
+        "y": 21,
+        "w": 18,
+        "h": 9
+      },
+      "multiSourceChart": {
+        "id": "efea4101-5e81-5b20-9ca8-13ea52f42647",
+        "title": "Диск · запись",
+        "description": "",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "2339e0aa-9f03-50ba-8d2f-bcb5613343c2",
+              "query": "alias(series_sum(\"instance\", {project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"default\", service=\"__compute__\", name=\"disk.write_bytes\"}), \"{{instance}}\")",
+              "textMode": true,
+              "name": "A"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "2339e0aa-9f03-50ba-8d2f-bcb5613343c2",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_LINE",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_BYTES_SI_PER_SECOND"
+            }
+          }
+        }
+      }
+    },
+    {
+      "position": {
+        "x": 0,
+        "y": 30,
+        "w": 18,
+        "h": 9
+      },
+      "multiSourceChart": {
+        "id": "bd6e04f8-5792-5cc2-b46b-5dd1164ee1fc",
+        "title": "Диск · операции чтения и записи",
+        "description": "",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "9f63623e-5cdd-599f-8409-393661eb9fa0",
+              "query": "alias({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"default\", service=\"__compute__\", name=\"disk.read_ops|disk.write_ops\"}, \"{{instance}} · {{name}}\")",
+              "textMode": true,
+              "name": "A"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "9f63623e-5cdd-599f-8409-393661eb9fa0",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_LINE",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_IO_OPERATIONS_PER_SECOND"
+            }
+          }
+        }
+      }
+    },
+    {
+      "position": {
+        "x": 18,
+        "y": 30,
+        "w": 18,
+        "h": 9
+      },
+      "multiSourceChart": {
+        "id": "e361aeaf-9225-52ec-8c4d-4a5d83f4a0d5",
+        "title": "Диск · ошибки операций",
+        "description": "",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "aad06ed7-0aa2-5169-86e7-450134f4a50a",
+              "query": "alias({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"default\", service=\"__compute__\", name=\"disk.read_errors|disk.write_errors\"}, \"{{instance}} · {{name}}\")",
+              "textMode": true,
+              "name": "A"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "aad06ed7-0aa2-5169-86e7-450134f4a50a",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_LINE",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_OPERATIONS_PER_SECOND"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "timeline": {
+    "period": "1h",
+    "refreshInterval": 60000
+  },
+  "parametrization": {
+    "parameters": []
+  }
+}

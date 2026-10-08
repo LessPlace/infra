@@ -1,0 +1,12 @@
+[Unit]
+Description=Refresh the existing Less TLS certificate
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /opt/less/p-common-1/refresh-certificate.py
+UMask=0077
+MemoryMax=128M
+CPUQuota=10%
+TimeoutStartSec=120

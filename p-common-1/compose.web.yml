@@ -1,0 +1,24 @@
+name: less-web
+services:
+  web:
+    image: cr.yandex/crp5f6o2ivb58ruhp27e/web:latest
+    restart: unless-stopped
+    cpus: 0.10
+    mem_limit: 96m
+    memswap_limit: 96m
+    pids_limit: 64
+    environment:
+      NGINX_WORKER_PROCESSES: '1'
+      # API ещё не развёрнуты. Веб не зависит от их DNS при запуске.
+      SHEETS_API_UPSTREAM: http://unavailable-content:1711
+      ACCOUNTS_API_UPSTREAM: http://unavailable-accounts:1713
+    networks:
+      web:
+        ipv4_address: 172.18.0.2
+    logging:
+      driver: json-file
+      options: {max-size: 10m, max-file: '3'}
+networks:
+  web:
+    external: true
+    name: less-web

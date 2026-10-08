@@ -23,6 +23,8 @@ def make_environment(key, folder, hostname):
         raise ValueError('Unexpected machine')
     return '\n'.join([
         'OTEL_SDK_DISABLED=false',
+        # swift-otel при уровне info журналирует значения переменных, включая заголовки авторизации.
+        'OTEL_LOG_LEVEL=warning',
         'OTEL_METRICS_EXPORTER=otlp',
         'OTEL_TRACES_EXPORTER=none',
         'OTEL_LOGS_EXPORTER=none',

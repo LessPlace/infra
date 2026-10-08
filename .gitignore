@@ -1,0 +1,12 @@
+.runtime/
+*.env
+!*.env.example
+__pycache__/
+*.pem
+*.key
+*.htpasswd
+
+# Резервные копии состояния перед установкой остаются локально
+*.before-monium
+monium/dashboard-backups/
+.DS_Store

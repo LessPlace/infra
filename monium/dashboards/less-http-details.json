@@ -1,0 +1,515 @@
+{
+  "folderId": "b1gk1vp06cum61i9d4fe",
+  "name": "less-http-details",
+  "title": "Less · 02 · Запросы и задержки",
+  "description": "Промышленный Less. HTTP-метрики семи служб; обновление раз в минуту.",
+  "labels": {
+    "product": "less",
+    "environment": "production"
+  },
+  "widgets": [
+    {
+      "position": {
+        "x": 0,
+        "y": 0,
+        "w": 36,
+        "h": 3
+      },
+      "text": {
+        "text": "**Разбор HTTP.** [Общий обзор](https://monium.yandex.cloud/projects/folder__b1gk1vp06cum61i9d4fe/dashboards/less-production-health/view) · Выберите службу и при необходимости маршрут. Здесь * включает проверки доступности; общий обзор их исключает. Диапазоны времени показывают запросы в секунду. Максимум снизу накоплен с запуска процесса и помечен отдельно. Пустые 4xx/5xx не заменяют проверку доставки данных."
+      }
+    },
+    {
+      "position": {
+        "x": 0,
+        "y": 3,
+        "w": 18,
+        "h": 9
+      },
+      "multiSourceChart": {
+        "id": "44e10708-f989-5644-a73c-a42d5f97c2d3",
+        "title": "RPS · наиболее нагруженные маршруты",
+        "description": "",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "f78dabce-c780-5135-aeb8-ed2970b8f07f",
+              "query": "alias(top_max(10, series_sum([\"service\", \"http.request.method\", \"http.route\"], non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"{{service}}\", name=\"http.server.requests\", \"http.route\"=\"{{route}}\"}))), \"{{service}} · {{http.request.method}} {{http.route}}\")",
+              "textMode": true,
+              "name": "A"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "f78dabce-c780-5135-aeb8-ed2970b8f07f",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_LINE",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_REQUESTS_PER_SECOND"
+            }
+          }
+        }
+      }
+    },
+    {
+      "position": {
+        "x": 18,
+        "y": 3,
+        "w": 18,
+        "h": 9
+      },
+      "multiSourceChart": {
+        "id": "81abb0bd-72d8-5674-ba44-9458b7d0ac3a",
+        "title": "Время ответа · p50 / p95 / p99",
+        "description": "",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "d6c8d850-5ef7-5172-873e-c88e134cae62",
+              "query": "alias(1000 * histogram_percentile(50, \"bin\", series_sum(\"bin\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"{{service}}\", name=\"http.server.request.duration\", \"http.route\"=\"{{route}}\"}))), \"p50\")",
+              "textMode": true,
+              "name": "A"
+            }
+          },
+          {
+            "monitoringTarget": {
+              "dataSourceId": "d6c8d850-5ef7-5172-873e-c88e134cae62",
+              "query": "alias(1000 * histogram_percentile(95, \"bin\", series_sum(\"bin\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"{{service}}\", name=\"http.server.request.duration\", \"http.route\"=\"{{route}}\"}))), \"p95\")",
+              "textMode": true,
+              "name": "B"
+            }
+          },
+          {
+            "monitoringTarget": {
+              "dataSourceId": "d6c8d850-5ef7-5172-873e-c88e134cae62",
+              "query": "alias(1000 * histogram_percentile(99, \"bin\", series_sum(\"bin\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"{{service}}\", name=\"http.server.request.duration\", \"http.route\"=\"{{route}}\"}))), \"p99\")",
+              "textMode": true,
+              "name": "C"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "d6c8d850-5ef7-5172-873e-c88e134cae62",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_LINE",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_MILLISECONDS"
+            }
+          }
+        }
+      }
+    },
+    {
+      "position": {
+        "x": 0,
+        "y": 12,
+        "w": 36,
+        "h": 10
+      },
+      "multiSourceChart": {
+        "id": "314b24e0-36b8-52f6-ae2d-048efa001a6f",
+        "title": "Распределение задержек · запросов / с",
+        "description": "Непересекающиеся диапазоны длительности. Прирост накопительных бакетов, не распределение с запуска процесса.",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "30f21579-516f-533e-99c6-a2579a62818b",
+              "query": "alias(histogram_count(0, 0.01, \"bin\", series_sum(\"bin\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"{{service}}\", name=\"http.server.request.duration\", \"http.route\"=\"{{route}}\"}))), \"до 10 мс\")",
+              "textMode": true,
+              "name": "A"
+            }
+          },
+          {
+            "monitoringTarget": {
+              "dataSourceId": "30f21579-516f-533e-99c6-a2579a62818b",
+              "query": "alias(histogram_count(0.01, 0.05, \"bin\", series_sum(\"bin\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"{{service}}\", name=\"http.server.request.duration\", \"http.route\"=\"{{route}}\"}))), \"10–50 мс\")",
+              "textMode": true,
+              "name": "B"
+            }
+          },
+          {
+            "monitoringTarget": {
+              "dataSourceId": "30f21579-516f-533e-99c6-a2579a62818b",
+              "query": "alias(histogram_count(0.05, 0.1, \"bin\", series_sum(\"bin\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"{{service}}\", name=\"http.server.request.duration\", \"http.route\"=\"{{route}}\"}))), \"50–100 мс\")",
+              "textMode": true,
+              "name": "C"
+            }
+          },
+          {
+            "monitoringTarget": {
+              "dataSourceId": "30f21579-516f-533e-99c6-a2579a62818b",
+              "query": "alias(histogram_count(0.1, 0.25, \"bin\", series_sum(\"bin\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"{{service}}\", name=\"http.server.request.duration\", \"http.route\"=\"{{route}}\"}))), \"100–250 мс\")",
+              "textMode": true,
+              "name": "D"
+            }
+          },
+          {
+            "monitoringTarget": {
+              "dataSourceId": "30f21579-516f-533e-99c6-a2579a62818b",
+              "query": "alias(histogram_count(0.25, 1, \"bin\", series_sum(\"bin\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"{{service}}\", name=\"http.server.request.duration\", \"http.route\"=\"{{route}}\"}))), \"250 мс–1 с\")",
+              "textMode": true,
+              "name": "E"
+            }
+          },
+          {
+            "monitoringTarget": {
+              "dataSourceId": "30f21579-516f-533e-99c6-a2579a62818b",
+              "query": "alias(histogram_count(1, 10, \"bin\", series_sum(\"bin\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"{{service}}\", name=\"http.server.request.duration\", \"http.route\"=\"{{route}}\"}))), \"1–10 с\")",
+              "textMode": true,
+              "name": "F"
+            }
+          },
+          {
+            "monitoringTarget": {
+              "dataSourceId": "30f21579-516f-533e-99c6-a2579a62818b",
+              "query": "alias(histogram_count(\"bin\", series_sum(\"bin\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"{{service}}\", name=\"http.server.request.duration\", \"http.route\"=\"{{route}}\"}))) - histogram_count(0, 10, \"bin\", series_sum(\"bin\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"{{service}}\", name=\"http.server.request.duration\", \"http.route\"=\"{{route}}\"}))), \"более 10 с\")",
+              "textMode": true,
+              "name": "G"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "30f21579-516f-533e-99c6-a2579a62818b",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_STACK",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_REQUESTS_PER_SECOND"
+            }
+          }
+        }
+      }
+    },
+    {
+      "position": {
+        "x": 0,
+        "y": 22,
+        "w": 18,
+        "h": 9
+      },
+      "multiSourceChart": {
+        "id": "0594c113-7841-5042-b533-406fae1279ee",
+        "title": "Медленные маршруты · среднее время",
+        "description": "",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "1f9e0762-af32-5153-9a08-d33aca166e30",
+              "query": "alias(top_max(10, 1000 * series_sum([\"service\", \"http.request.method\", \"http.route\"], non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"{{service}}\", name=\"http.server.request.duration.sum\", \"http.route\"=\"{{route}}\"})) / series_sum([\"service\", \"http.request.method\", \"http.route\"], non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"{{service}}\", name=\"http.server.request.duration.count\", \"http.route\"=\"{{route}}\"}))), \"{{service}} · {{http.request.method}} {{http.route}}\")",
+              "textMode": true,
+              "name": "A"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "1f9e0762-af32-5153-9a08-d33aca166e30",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_LINE",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_MILLISECONDS"
+            }
+          }
+        }
+      }
+    },
+    {
+      "position": {
+        "x": 18,
+        "y": 22,
+        "w": 18,
+        "h": 9
+      },
+      "multiSourceChart": {
+        "id": "b236ae71-594e-5fab-9ca3-618c8de1b38b",
+        "title": "Коды HTTP · запросов / с",
+        "description": "",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "4722177d-c3cd-59b2-b576-a11cd550e0d0",
+              "query": "alias(series_sum(\"http.response.status_code\", non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"{{service}}\", name=\"http.server.requests\", \"http.route\"=\"{{route}}\"})), \"HTTP {{http.response.status_code}}\")",
+              "textMode": true,
+              "name": "A"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "4722177d-c3cd-59b2-b576-a11cd550e0d0",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_STACK",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_REQUESTS_PER_SECOND"
+            }
+          }
+        }
+      }
+    },
+    {
+      "position": {
+        "x": 0,
+        "y": 31,
+        "w": 18,
+        "h": 9
+      },
+      "multiSourceChart": {
+        "id": "5a1b8bf7-b5d9-5d62-a653-76600beb473d",
+        "title": "4xx · маршруты и коды",
+        "description": "",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "28a2f34e-fc9d-57bd-94de-64536928b81c",
+              "query": "alias(top_max(10, series_sum([\"service\", \"http.request.method\", \"http.route\", \"http.response.status_code\"], non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"{{service}}\", name=\"http.server.requests\", \"http.route\"=\"{{route}}\", \"http.response.status_code\"=\"4*\"}))), \"{{http.response.status_code}} · {{service}} · {{http.request.method}} {{http.route}}\")",
+              "textMode": true,
+              "name": "A"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "28a2f34e-fc9d-57bd-94de-64536928b81c",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_LINE",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_REQUESTS_PER_SECOND"
+            }
+          }
+        }
+      }
+    },
+    {
+      "position": {
+        "x": 18,
+        "y": 31,
+        "w": 18,
+        "h": 9
+      },
+      "multiSourceChart": {
+        "id": "00caf4df-24a7-5fdc-92c9-83c70c893e6b",
+        "title": "5xx · маршруты и коды",
+        "description": "",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "6f1ab099-d0d8-5bff-a227-82348e72aeb3",
+              "query": "alias(top_max(10, series_sum([\"service\", \"http.request.method\", \"http.route\", \"http.response.status_code\"], non_negative_derivative({project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"{{service}}\", name=\"http.server.requests\", \"http.route\"=\"{{route}}\", \"http.response.status_code\"=\"5*\"}))), \"{{http.response.status_code}} · {{service}} · {{http.request.method}} {{http.route}}\")",
+              "textMode": true,
+              "name": "A"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "6f1ab099-d0d8-5bff-a227-82348e72aeb3",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_LINE",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_REQUESTS_PER_SECOND"
+            }
+          }
+        }
+      }
+    },
+    {
+      "position": {
+        "x": 0,
+        "y": 40,
+        "w": 36,
+        "h": 9
+      },
+      "multiSourceChart": {
+        "id": "8b94d2fd-c673-577c-9b47-45a0c4832ef7",
+        "title": "Исторический максимум · с запуска процесса",
+        "description": "Накопительный максимум! Старый медленный запрос остаётся здесь до перезапуска процесса. Для текущих задержек используйте процентили выше.",
+        "displayLegend": true,
+        "targets": [
+          {
+            "monitoringTarget": {
+              "dataSourceId": "9bf7805d-5611-5e96-9af7-804117580d0a",
+              "query": "alias(top_max(10, 1000 * {project=\"folder__b1gk1vp06cum61i9d4fe\", cluster=\"production\", service=\"{{service}}\", name=\"http.server.request.duration.max\", \"http.route\"=\"{{route}}\"}), \"{{service}} · {{http.request.method}} {{http.route}} · {{http.response.status_code}}\")",
+              "textMode": true,
+              "name": "A"
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "monitoringDataSource": {
+              "id": "9bf7805d-5611-5e96-9af7-804117580d0a",
+              "downsampling": {
+                "gridAggregation": "GRID_AGGREGATION_LAST",
+                "gapFilling": "GAP_FILLING_NULL"
+              }
+            }
+          }
+        ],
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_LINE",
+          "interpolate": "INTERPOLATE_LEFT",
+          "colorSchemeSettings": {
+            "standard": {}
+          },
+          "yaxisSettings": {
+            "left": {
+              "type": "YAXIS_TYPE_LINEAR",
+              "min": "0",
+              "unitFormat": "UNIT_MILLISECONDS"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "timeline": {
+    "period": "1h",
+    "refreshInterval": 60000
+  },
+  "parametrization": {
+    "parameters": [
+      {
+        "name": "service",
+        "title": "Служба",
+        "custom": {
+          "values": [
+            "*",
+            "sheets-api",
+            "less-accounts-api",
+            "control-plane-api",
+            "backoffice-api",
+            "accounts-backoffice-reader",
+            "content-backoffice-reader",
+            "control-plane-backoffice-reader"
+          ],
+          "defaultValues": [
+            "sheets-api"
+          ]
+        },
+        "description": "* — все службы. Внутренние вызовы учитываются отдельно."
+      },
+      {
+        "name": "route",
+        "title": "Маршрут",
+        "text": {
+          "defaultValue": "*"
+        },
+        "description": "Шаблон маршрута, например /api/pages/{id}/snapshot. * — все, включая проверки доступности."
+      }
+    ]
+  }
+}
