@@ -30,7 +30,8 @@ def main():
         raise RuntimeError('Unexpected secret format')
     env = dict(line.split('=', 1) for line in Path('/etc/less/secrets/accounts.env').read_text().splitlines() if '=' in line)
     values.update(STRICT_ID_SEED=env['STRICT_ID_SEED'], DB_HOST='postgres', DB_PORT='5432',
-                  DB_USERNAME='backoffice_accounts', DB_DATABASE='less_accounts', DB_TLS='disable')
+                  DB_USERNAME='backoffice_accounts', DB_DATABASE='less_accounts', DB_TLS='disable',
+                  APP_PUBLIC_ORIGIN='https://less.place')
     if any('\n' in value or '\r' in value or '\0' in value for value in values.values()):
         raise RuntimeError('Invalid environment field')
     sql = """BEGIN;
@@ -60,6 +61,10 @@ GRANT SELECT ON registration_invitation TO backoffice_accounts;
 GRANT INSERT(id,email_address,email_canonical,created_by,created_at,expires_at)
  ON registration_invitation TO backoffice_accounts;
 GRANT UPDATE(delivery_status) ON registration_invitation TO backoffice_accounts;
+GRANT SELECT(id,token_hash,created_by,created_at,expires_at,used_at,user_id)
+ ON registration_link TO backoffice_accounts;
+GRANT INSERT(id,token_hash,created_by,created_at,expires_at)
+ ON registration_link TO backoffice_accounts;
 COMMIT;
 """
     host.run(['docker', 'exec', '-i', 'less-common-postgres-1', 'psql', '-X', '-q', '-v', 'ON_ERROR_STOP=1',
@@ -103,6 +108,10 @@ server {{
   {headers}
  }}
  location = /internal/backoffice/v1/registration-invitations {{
+  limit_except GET POST {{ deny all; }}
+  {headers}
+ }}
+ location = /internal/backoffice/v1/registration-links {{
   limit_except GET POST {{ deny all; }}
   {headers}
  }}
