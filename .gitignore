@@ -10,3 +10,7 @@ __pycache__/
 *.before-monium
 monium/dashboard-backups/
 .DS_Store
+
+# Локальные копии данных не включать в репозиторий
+backups/data/
+*.dump
