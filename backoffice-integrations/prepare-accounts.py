@@ -56,6 +56,10 @@ GRANT SELECT(client_id,user_id,workspace_id,auth_provider,status,last_seen_at,ex
 GRANT UPDATE(is_approved,updated_at) ON account_user TO backoffice_accounts;
 GRANT INSERT ON registration_approval_mail TO backoffice_accounts;
 GRANT SELECT(user_id) ON registration_approval_mail TO backoffice_accounts;
+GRANT SELECT ON registration_invitation TO backoffice_accounts;
+GRANT INSERT(id,email_address,email_canonical,created_by,created_at,expires_at)
+ ON registration_invitation TO backoffice_accounts;
+GRANT UPDATE(delivery_status) ON registration_invitation TO backoffice_accounts;
 COMMIT;
 """
     host.run(['docker', 'exec', '-i', 'less-common-postgres-1', 'psql', '-X', '-q', '-v', 'ON_ERROR_STOP=1',
@@ -96,6 +100,10 @@ server {{
  if ($accounts_service_identity = 0) {{ return 403; }}
  location ~ ^/internal/backoffice/v1/registration-approvals/U_[A-Za-z0-9]+/approve$ {{
   limit_except POST {{ deny all; }}
+  {headers}
+ }}
+ location = /internal/backoffice/v1/registration-invitations {{
+  limit_except GET POST {{ deny all; }}
   {headers}
  }}
  location /internal/backoffice/v1/ {{
