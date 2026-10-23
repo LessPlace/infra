@@ -6,7 +6,7 @@ services:
   postgres:
     image: postgres:18
     restart: unless-stopped
-    cpus: 0.60
+    cpus: 1.50
     mem_limit: 1024m
     memswap_limit: 1024m
     pids_limit: 128
