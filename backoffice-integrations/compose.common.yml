@@ -27,7 +27,7 @@ services:
         aliases: [control-plane.backoffice.internal, accounts.backoffice.internal]
     logging: *logging
   reader:
-    image: cr.yandex/crp5f6o2ivb58ruhp27e/control-plane:latest
+    image: cr.yandex/crp5f6o2ivb58ruhp27e/control-plane@sha256:89f761f3be7f2359d1313a7d67170c6707256db600a5deb6a5bdec085828b1b5
     restart: unless-stopped
     init: true
     cpus: 0.10

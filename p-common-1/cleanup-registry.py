@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Удаляет устаревшие образы выбранных служб, сохраняя latest и все его дочерние манифесты."""
+"""Удаляет устаревшие образы выбранных служб, сохраняя все именованные версии и явно закреплённые образы."""
 import argparse
 import json
 import os
@@ -11,6 +11,8 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('services', nargs='+',
                     choices=['control-plane', 'accounts', 'content', 'web', 'backoffice-api', 'backoffice-web'])
 parser.add_argument('--apply', action='store_true')
+parser.add_argument('--keep', action='append', default=[],
+                    help='Дополнительный защищённый образ cr.yandex/REPOSITORY@sha256:DIGEST')
 args = parser.parse_args()
 
 
@@ -44,7 +46,14 @@ with tempfile.TemporaryDirectory(prefix='less-registry-cleanup-') as directory:
         if len(latest) != 1:
             raise SystemExit('Expected exactly one latest: '+service)
         roots[name] = latest[0]['digest']
-        protect(name, latest[0]['digest'])
+        for item in items:
+            if item['name'] == name and any(not tag.startswith('sha256:') for tag in item.get('tags', [])):
+                protect(name, item['digest'])
+    for reference in args.keep:
+        if not reference.startswith('cr.yandex/'+REGISTRY+'/') or '@sha256:' not in reference:
+            raise SystemExit('Invalid protected image reference')
+        name, digest = reference.removeprefix('cr.yandex/').split('@', 1)
+        protect(name, digest)
     candidates = [item for item in items if item['name'] in roots
                   and (item['name'], item['digest']) not in protected
                   and all(tag.startswith('sha256:') for tag in item.get('tags', []))]
@@ -56,6 +65,10 @@ with tempfile.TemporaryDirectory(prefix='less-registry-cleanup-') as directory:
             if not any(item['name'] == name and item['digest'] == digest and 'latest' in item.get('tags', [])
                        for item in fresh):
                 raise SystemExit('Latest changed concurrently; nothing deleted')
+        old_inventory = {(item['id'], item['digest'], tuple(sorted(item.get('tags', [])))) for item in items}
+        new_inventory = {(item['id'], item['digest'], tuple(sorted(item.get('tags', [])))) for item in fresh}
+        if old_inventory != new_inventory:
+            raise SystemExit('Registry changed concurrently; nothing deleted')
         for item in candidates:
             subprocess.run(['yc', 'container', 'image', 'delete', '--id', item['id']], check=True,
                            stdout=subprocess.DEVNULL)
