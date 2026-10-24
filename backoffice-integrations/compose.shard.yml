@@ -25,7 +25,7 @@ services:
     logging: *logging
     ports: ['10.130.0.4:18493:18493']
   reader:
-    image: cr.yandex/crp5f6o2ivb58ruhp27e/content@sha256:72581f1df1fd60c27542b8d1531e6d8ed71a8da74fa97e1931418cf4fb58c543
+    image: cr.yandex/crp5f6o2ivb58ruhp27e/content@sha256:73d91faf1ccb84af59b9a30134d5bb56f0ee708ef3bb6fc7934bb9f66dae646d
     restart: unless-stopped
     init: true
     cpus: 0.15
