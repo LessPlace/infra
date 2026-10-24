@@ -39,7 +39,7 @@ services:
     networks: [database]
     logging: *logging
   content:
-    image: cr.yandex/crp5f6o2ivb58ruhp27e/content:latest
+    image: cr.yandex/crp5f6o2ivb58ruhp27e/content@sha256:b190deab3c498fd2311a7b6be3d77d5e9c63d19a5e4d7b8a330176b9586778f4
     restart: unless-stopped
     init: true
     cpus: 1.00
