@@ -39,7 +39,7 @@ services:
       driver: json-file
       options: {max-size: 10m, max-file: '3'}
   accounts:
-    image: cr.yandex/crp5f6o2ivb58ruhp27e/accounts:latest
+    image: cr.yandex/crp5f6o2ivb58ruhp27e/accounts@sha256:d7295cc7dae1a2a18473f7ad4dd4c1a45d36d7a20d6e0c127b44e86b3949e3f8
     restart: unless-stopped
     init: true
     cpus: 0.20
