@@ -1,7 +1,7 @@
 name: less-backoffice
 services:
   backoffice-api:
-    image: cr.yandex/crp5f6o2ivb58ruhp27e/backoffice-api:latest
+    image: cr.yandex/crp5f6o2ivb58ruhp27e/backoffice-api@sha256:7aa98b16852c849c5b56c32c84b637b5dcf0ba95ba56290360e3e0e80bd24e18
     restart: unless-stopped
     init: true
     cpus: 0.20
