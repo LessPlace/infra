@@ -113,7 +113,8 @@ def verify(root):
              '-e', 'POSTGRES_DB=restore_bootstrap', '-e', 'POSTGRES_PASSWORD=' + password, 'postgres:18'])
         try:
             for _ in range(60):
-                ready = subprocess.run(['docker', 'exec', name, 'pg_isready', '-U', user,
+                # initdb's temporary server accepts Unix sockets before the final server starts.
+                ready = subprocess.run(['docker', 'exec', name, 'pg_isready', '-h', '127.0.0.1', '-U', user,
                                         '-d', 'restore_bootstrap'], capture_output=True)
                 if ready.returncode == 0:
                     break

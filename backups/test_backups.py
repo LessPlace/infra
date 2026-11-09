@@ -10,6 +10,19 @@ import s3
 
 
 class BackupTests(unittest.TestCase):
+    def test_restore_waits_for_final_tcp_server(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / 'postgres'
+            (root / 'content').mkdir(parents=True)
+            (root / 'content' / 'globals.sql').write_text('')
+            common.save(root / 'manifest.json', [{'name': 'content', 'databases': []}])
+            common.seal(root)
+            with patch.object(postgres, 'run'), patch.object(postgres.subprocess, 'run') as ready:
+                ready.return_value.returncode = 0
+                postgres.verify(root)
+            command = ready.call_args.args[0]
+            self.assertEqual(command[3:6], ['pg_isready', '-h', '127.0.0.1'])
+
     def test_corruption_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
